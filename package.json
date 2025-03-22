@@ -1,0 +1,17 @@
+{
+  "name": "cekilis-sitesi",
+  "version": "1.0.0",
+  "description": "Focusbet çekiliş sitesi",
+  "main": "server-cekilis.js",
+  "scripts": {
+    "start": "node server-cekilis.js"
+  },
+  "author": "mirabeylice",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "firebase": "^10.0.0",
+    "firebase-admin": "^13.2.0",
+    "sqlite3": "^5.1.7"
+  }
+}

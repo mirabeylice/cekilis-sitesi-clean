@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOCUSBET 1,000,000.00 TRY ÖDÜLLÜ BİLET ÇEKİLİŞİ</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>FOCUSBET 1,000,000.00 TRY ÖDÜLLÜ BİLET ÇEKİLİŞİ</h1>
+        <img src="/bilet.jpg" alt="Çekiliş Bileti" class="bilet-gorsel">
+
+        <div class="input-group">
+            <input type="text" id="kullaniciAdi" placeholder="Kullanıcı adınızı girin">
+            <button onclick="biletSorgula()">Sorgula</button>
+        </div>
+        <p id="sonuc"></p>
+
+        <table id="biletTablo" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Bilet Numarası</th>
+                    <th>Tarih</th>
+                    <th>Adet</th>
+                </tr>
+            </thead>
+            <tbody id="biletBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function biletSorgula() {
+            const kullaniciAdi = document.getElementById("kullaniciAdi").value;
+            fetch(`/cekilis?sorgu=${kullaniciAdi}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.biletler.length > 0) {
+                        let sonucHTML = `<strong>Kullanıcı:</strong> ${kullaniciAdi} <br> <strong>Toplam Bilet:</strong> ${data.toplamBilet}`;
+                        document.getElementById("sonuc").innerHTML = sonucHTML;
+
+                        let biletHTML = "";
+                        data.biletler.forEach(bilet => {
+                            biletHTML += `<tr>
+                                <td>${bilet.bilet_numarasi}</td>
+                                <td>${bilet.tarih}</td>
+                                <td>${bilet.bilet_adedi}</td>
+                            </tr>`;
+                        });
+
+                        document.getElementById("biletBody").innerHTML = biletHTML;
+                        document.getElementById("biletTablo").style.display = "table";
+                    } else {
+                        document.getElementById("sonuc").innerText = "Bu kullanıcıya ait bilet bulunamadı.";
+                        document.getElementById("biletTablo").style.display = "none";
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("sonuc").innerText = "Bir hata oluştu, tekrar deneyin.";
+                });
+        }
+    </script>
+</body>
+</html>
