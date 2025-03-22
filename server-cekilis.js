@@ -1,8 +1,9 @@
 const express = require("express");
+const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const fs = require("fs");
+const admin = require("firebase-admin"); // Firebase Admin SDK
 
-// Firebase Admin SDK
+// Firebase servisini başlatmak için çevresel değişkenden anahtar verisini alıyoruz
 const serviceAccount = JSON.parse(process.env.FIREBASE_KEY_JSON);
 
 admin.initializeApp({
@@ -10,16 +11,16 @@ admin.initializeApp({
   databaseURL: "https://cekilis-sitesi-default-rtdb.europe-west1.firebasedatabase.app"
 });
 
-const db = admin.database();
-
 const app = express();
-app.use(express.static("public"));
-app.use(express.json());
+const db = new sqlite3.Database("./database/biletler.db");
 
 // Türkiye saat dilimini almak için
 const getTurkeyTime = () => {
   return new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
 };
+
+app.use(express.static("public"));
+app.use(express.json());
 
 // Ana sayfa
 app.get("/", (req, res) => {
@@ -27,33 +28,30 @@ app.get("/", (req, res) => {
 });
 
 // Kullanıcı adına göre biletleri sorgulama
-app.get("/cekilis", async (req, res) => {
+app.get("/cekilis", (req, res) => {
   const kullaniciAdi = req.query.sorgu;
+
   if (!kullaniciAdi) {
     return res.json({ mesaj: "Kullanıcı adı gerekli.", biletler: [], toplamBilet: 0 });
   }
 
-  try {
-    const ref = db.ref("biletler");
-    const snapshot = await ref.orderByChild("kullanici_adi").equalTo(kullaniciAdi).once("value");
+  db.all(
+    "SELECT bilet_numarasi, bilet_adedi, tarih FROM biletler WHERE kullanici_adi = ?",
+    [kullaniciAdi],
+    (err, rows) => {
+      if (err) {
+        return res.json({ mesaj: "Veri alınırken hata oluştu.", biletler: [], toplamBilet: 0 });
+      }
 
-    const biletlerObj = snapshot.val();
-    if (!biletlerObj) {
-      return res.json({ mesaj: "Bu kullanıcıya ait bilet bulunamadı.", biletler: [], toplamBilet: 0 });
+      const toplamBilet = rows.reduce((toplam, row) => toplam + row.bilet_adedi, 0);
+
+      res.json({
+        mesaj: "Biletler başarıyla listelendi.",
+        biletler: rows,
+        toplamBilet,
+      });
     }
-
-    const biletler = Object.values(biletlerObj);
-    const toplamBilet = biletler.reduce((toplam, b) => toplam + b.bilet_adedi, 0);
-
-    res.json({
-      mesaj: "Biletler başarıyla listelendi.",
-      biletler,
-      toplamBilet
-    });
-  } catch (err) {
-    console.error(err);
-    res.json({ mesaj: "Veri alınırken hata oluştu.", biletler: [], toplamBilet: 0 });
-  }
+  );
 });
 
 // Sunucuyu başlat
