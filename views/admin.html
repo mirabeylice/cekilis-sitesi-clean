@@ -7,47 +7,34 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="admin-container">
+    <div class="container">
         <h1>Admin Paneli</h1>
         <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel">
 
-        <!-- Bilet Ekleme -->
-        <h2>Bilet Ekle</h2>
+        <!-- Yeni Bilet Ekleme -->
         <div class="form-group">
-            <input type="text" id="ekleKullaniciAdi" placeholder="Kullanıcı Adı">
-            <input type="text" id="ekleBiletNumarasi" placeholder="Bilet Numarası">
-            <input type="number" id="ekleBiletAdedi" placeholder="Bilet Adedi">
+            <h2>Yeni Bilet Ekle</h2>
+            <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı">
+            <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası">
+            <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi">
             <button onclick="biletEkle()">Bilet Ekle</button>
         </div>
-        <p id="ekleSonuc"></p>
 
         <!-- Bilet Güncelleme -->
-        <h2>Bilet Güncelle</h2>
         <div class="form-group">
+            <h2>Bilet Güncelle</h2>
             <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı">
             <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası">
             <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi">
             <button onclick="biletGuncelle()">Bilet Güncelle</button>
         </div>
-        <p id="guncelleSonuc"></p>
 
-        <!-- Tüm Biletleri Gösterme -->
-        <h2>Tüm Biletler</h2>
-        <button onclick="tumBiletleriGoster()">Tüm Biletleri Göster</button>
-        
-        <table id="tumBiletlerTablo" class="bilet-tablosu" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Kullanıcı Adı</th>
-                    <th>Bilet Numarası</th>
-                    <th>Adet</th>
-                    <th>Tarih</th>
-                    <th>Sil</th>
-                </tr>
-            </thead>
-            <tbody id="tumBiletlerBody">
-            </tbody>
-        </table>
+        <!-- Tüm Biletleri Göster -->
+        <div class="form-group">
+            <h2>Tüm Biletler</h2>
+            <button onclick="tumBiletleriGoster()">Tüm Biletleri Göster</button>
+            <ul id="biletListesi"></ul>
+        </div>
     </div>
 
     <script src="/admin.js"></script>

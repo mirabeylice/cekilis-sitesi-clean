@@ -1,80 +1,102 @@
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
-const bodyParser = require("body-parser");
+const session = require("express-session");
 const path = require("path");
+const admin = require("firebase-admin");
 
-// Türkiye saat dilimini almak için
-const getTurkeyTime = () => {
-    return new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
-};
+const firebaseKey = JSON.parse(process.env.FIREBASE_KEY_JSON);
 
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseKey),
+  databaseURL: "https://cekilis-sitesi-default-rtdb.europe-west1.firebasedatabase.app"
+});
+
+const db = admin.database();
 const app = express();
-const db = new sqlite3.Database("./database/biletler.db");
 
 app.use(express.static("public"));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(session({
+  secret: "cekilis-secret",
+  resave: false,
+  saveUninitialized: true
+}));
 
-// **Ana Sayfa**
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "index.html"));
+// Giriş Sayfası
+app.get("/admin-login", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "admin-login.html"));
 });
 
-// **Admin Paneli**
+// Giriş Kontrol
+app.post("/admin-login", (req, res) => {
+  const { kullaniciAdi, sifre } = req.body;
+  if (kullaniciAdi === "focus00" && sifre === "Ortak-6543") {
+    req.session.authenticated = true;
+    res.redirect("/admin");
+  } else {
+    res.send("<h3>Hatalı giriş. Lütfen tekrar deneyin.</h3>");
+  }
+});
+
+// Admin Paneli Sayfası
 app.get("/admin", (req, res) => {
+  if (req.session.authenticated) {
     res.sendFile(path.join(__dirname, "views", "admin.html"));
+  } else {
+    res.redirect("/admin-login");
+  }
 });
 
-// **Bilet Ekleme (Mevcutta Bileti Varsa Uyarı Veriyor!)**
+// Yeni Bilet Ekleme
 app.post("/bilet-ekle", (req, res) => {
-    const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
-    const tarih = getTurkeyTime(); // Türkiye saatine göre tarih al
+  const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
+  const tarih = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
 
-    db.get("SELECT * FROM biletler WHERE kullanici_adi = ?", [kullaniciAdi], (err, row) => {
-        if (err) return res.json({ mesaj: "Bilet kontrol edilirken hata oluştu." });
-
-        if (row) {
-            return res.json({ mesaj: "Bu kullanıcıya ait zaten biletler var! Yeni bilet eklemek için 'Bilet Güncelle' bölümünü kullanın." });
-        }
-
-        db.run("INSERT INTO biletler (kullanici_adi, bilet_numarasi, bilet_adedi, tarih) VALUES (?, ?, ?, ?)", 
-            [kullaniciAdi, biletNumarasi, biletAdedi, tarih], 
-            err => {
-                if (err) return res.json({ mesaj: "Bilet eklenirken hata oluştu." });
-                res.json({ mesaj: "Bilet başarıyla eklendi!" });
-            }
-        );
-    });
+  const ref = db.ref(`biletler/${kullaniciAdi}`);
+  ref.once("value", snapshot => {
+    if (snapshot.exists()) {
+      res.json({ mesaj: "Bu kullanıcıya ait zaten biletler var! Lütfen 'Bilet Güncelle' bölümünü kullanın." });
+    } else {
+      ref.push({ bilet_numarasi: biletNumarasi, bilet_adedi: biletAdedi, tarih });
+      res.json({ mesaj: "Bilet başarıyla eklendi!" });
+    }
+  });
 });
 
-// **Bilet Güncelleme (Mevcut biletler korunarak yeni ekleme yapılıyor)**
+// Bilet Güncelleme
 app.post("/bilet-guncelle", (req, res) => {
-    const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
-    const tarih = getTurkeyTime(); // Türkiye saatine göre tarih al
+  const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
+  const tarih = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
 
-    db.run("INSERT INTO biletler (kullanici_adi, bilet_numarasi, bilet_adedi, tarih) VALUES (?, ?, ?, ?)", 
-        [kullaniciAdi, biletNumarasi, biletAdedi, tarih], 
-        err => {
-            if (err) return res.json({ mesaj: "Bilet güncellenirken hata oluştu." });
-            res.json({ mesaj: "Bilet başarıyla güncellendi!" });
-        }
-    );
+  const ref = db.ref(`biletler/${kullaniciAdi}`);
+  ref.push({ bilet_numarasi: biletNumarasi, bilet_adedi: biletAdedi, tarih });
+  res.json({ mesaj: "Yeni bilet başarıyla eklendi!" });
 });
 
-// **Tüm Biletleri Getir**
+// Tüm Biletleri Getir
 app.get("/tum-biletler", (req, res) => {
-    db.all("SELECT * FROM biletler", [], (err, rows) => {
-        if (err) return res.json([]);
-        res.json(rows);
+  db.ref("biletler").once("value", snapshot => {
+    const veriler = snapshot.val() || {};
+    const tumBiletler = [];
+    Object.keys(veriler).forEach(kullanici => {
+      Object.entries(veriler[kullanici]).forEach(([id, detay]) => {
+        tumBiletler.push({ id, kullanici_adi: kullanici, ...detay });
+      });
     });
+    res.json(tumBiletler);
+  });
 });
 
-// **Bilet Silme**
-app.delete("/bilet-sil/:id", (req, res) => {
-    db.run("DELETE FROM biletler WHERE id = ?", [req.params.id], err => {
-        if (err) return res.json({ mesaj: "Silme sırasında hata oluştu." });
-        res.json({ mesaj: "Bilet başarıyla silindi." });
-    });
+// Bilet Silme
+app.delete("/bilet-sil/:kullanici/:id", (req, res) => {
+  const { kullanici, id } = req.params;
+  db.ref(`biletler/${kullanici}/${id}`).remove(err => {
+    if (err) return res.json({ mesaj: "Silme sırasında hata oluştu." });
+    res.json({ mesaj: "Bilet başarıyla silindi." });
+  });
 });
 
 const PORT = process.env.PORT || 8081;
-app.listen(PORT, () => console.log(`Sunucu ${PORT} portunda çalışıyor...`));
+app.listen(PORT, () => {
+  console.log(`Admin Panel ${PORT} portunda çalışıyor...`);
+});
