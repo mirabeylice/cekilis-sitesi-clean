@@ -30,6 +30,10 @@ app.get("/admin-login", (req, res) => {
 // Giriş Kontrol
 app.post("/admin-login", (req, res) => {
   const { kullaniciAdi, sifre } = req.body;
+
+  console.log("Gelen Kullanıcı Adı:", kullaniciAdi);
+  console.log("Gelen Şifre:", sifre);
+
   if (kullaniciAdi === "focus00" && sifre === "Ortak-6543") {
     req.session.authenticated = true;
     res.redirect("/admin");

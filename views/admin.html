@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - Bilet Yönetimi</title>
-    <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Paneli - Bilet Yönetimi</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Paneli</h1>
-        <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel">
+  <div class="container">
+    <h1>Admin Paneli</h1>
+    <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel">
 
-        <!-- Yeni Bilet Ekleme -->
-        <div class="form-group">
-            <h2>Yeni Bilet Ekle</h2>
-            <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı">
-            <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası">
-            <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi">
-            <button onclick="biletEkle()">Bilet Ekle</button>
-        </div>
-
-        <!-- Bilet Güncelleme -->
-        <div class="form-group">
-            <h2>Bilet Güncelle</h2>
-            <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı">
-            <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası">
-            <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi">
-            <button onclick="biletGuncelle()">Bilet Güncelle</button>
-        </div>
-
-        <!-- Tüm Biletleri Göster -->
-        <div class="form-group">
-            <h2>Tüm Biletler</h2>
-            <button onclick="tumBiletleriGoster()">Tüm Biletleri Göster</button>
-            <ul id="biletListesi"></ul>
-        </div>
+    <!-- Yeni Bilet Ekleme -->
+    <div class="form-group">
+      <h2>Yeni Bilet Ekle</h2>
+      <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı">
+      <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası">
+      <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi">
+      <button onclick="biletEkle()">Bilet Ekle</button>
     </div>
 
-    <script src="/admin.js"></script>
+    <!-- Bilet Güncelleme -->
+    <div class="form-group">
+      <h2>Bilet Güncelle</h2>
+      <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı">
+      <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası">
+      <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi">
+      <button onclick="biletGuncelle()">Bilet Güncelle</button>
+    </div>
+
+    <!-- Tüm Biletleri Göster -->
+    <div class="form-group">
+      <h2>Tüm Biletler</h2>
+      <button onclick="tumBiletleriGoster()">Tüm Biletleri Göster</button>
+      <ul id="biletListesi"></ul>
+    </div>
+  </div>
+
+  <script src="/admin.js"></script>
 </body>
 </html>
