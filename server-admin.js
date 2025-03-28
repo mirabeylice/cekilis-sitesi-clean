@@ -4,7 +4,7 @@ const session = require("express-session");
 const path = require("path");
 const admin = require("firebase-admin");
 
-const firebaseKey = JSON.parse(process.env.FIREBASE_KEY_JSON);
+const firebaseKey = require("/etc/secrets/firebaseKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(firebaseKey),
