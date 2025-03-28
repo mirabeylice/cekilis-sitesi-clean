@@ -1,10 +1,11 @@
 /* Genel Sayfa Stili */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f5e6cc; /* Açık krem rengi arka plan */
+    background-color: #f5e6cc;
     margin: 0;
     padding: 0;
     text-align: center;
+    position: relative;
 }
 
 /* Ortak Konteyner */
@@ -34,6 +35,24 @@ input {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+}
+
+/* Göz simgesi */
+.password-toggle {
+    position: relative;
+    display: inline-block;
+    width: 90%;
+}
+.password-toggle input {
+    width: 100%;
+    padding-right: 40px;
+}
+.password-toggle .toggle-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    cursor: pointer;
 }
 
 /* Butonlar */
@@ -112,4 +131,21 @@ th, td {
 
 .sil-btn:hover {
     background-color: #c82333;
+}
+
+/* Çıkış Butonu */
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    text-decoration: none;
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    background-color: #b02a37;
 }

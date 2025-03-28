@@ -10,10 +10,22 @@
   <div class="container">
     <h1>Admin Giriş</h1>
     <form method="POST" action="/admin-login">
-        <input type="text" name="kullaniciAdi" placeholder="Kullanıcı Adı" required>
-        <input type="password" name="sifre" placeholder="Şifre" required>
-        <button type="submit">Giriş Yap</button>
-      </form>      
+      <input type="text" name="kullaniciAdi" placeholder="Kullanıcı Adı" required>
+      
+      <div style="position: relative;">
+        <input type="password" id="sifreInput" name="sifre" placeholder="Şifre" required>
+        <span onclick="toggleSifre()" style="position: absolute; right: 10px; top: 12px; cursor: pointer;">👁️</span>
+      </div>
+
+      <button type="submit">Giriş Yap</button>
+    </form>
   </div>
+
+  <script>
+    function toggleSifre() {
+      const input = document.getElementById("sifreInput");
+      input.type = input.type === "password" ? "text" : "password";
+    }
+  </script>
 </body>
 </html>

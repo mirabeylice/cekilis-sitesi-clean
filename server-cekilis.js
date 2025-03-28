@@ -1,18 +1,9 @@
+require("dotenv").config();
 const express = require("express");
-const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const admin = require("firebase-admin"); // Firebase Admin SDK
-
-// Firebase servisini başlatmak için çevresel değişkenden anahtar verisini alıyoruz
-const serviceAccount = JSON.parse(process.env.FIREBASE_KEY_JSON);
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://cekilis-sitesi-default-rtdb.europe-west1.firebasedatabase.app"
-});
+const db = require("./firebase");
 
 const app = express();
-const db = new sqlite3.Database("./database/biletler.db");
 
 // Türkiye saat dilimini almak için
 const getTurkeyTime = () => {
@@ -35,23 +26,18 @@ app.get("/cekilis", (req, res) => {
     return res.json({ mesaj: "Kullanıcı adı gerekli.", biletler: [], toplamBilet: 0 });
   }
 
-  db.all(
-    "SELECT bilet_numarasi, bilet_adedi, tarih FROM biletler WHERE kullanici_adi = ?",
-    [kullaniciAdi],
-    (err, rows) => {
-      if (err) {
-        return res.json({ mesaj: "Veri alınırken hata oluştu.", biletler: [], toplamBilet: 0 });
-      }
+  const ref = db.ref(`biletler/${kullaniciAdi}`);
+  ref.once("value", (snapshot) => {
+    const veriler = snapshot.val() || {};
+    const biletler = Object.values(veriler);
+    const toplamBilet = biletler.reduce((toplam, b) => toplam + Number(b.bilet_adedi || 0), 0);
 
-      const toplamBilet = rows.reduce((toplam, row) => toplam + row.bilet_adedi, 0);
-
-      res.json({
-        mesaj: "Biletler başarıyla listelendi.",
-        biletler: rows,
-        toplamBilet,
-      });
-    }
-  );
+    res.json({
+      mesaj: "Biletler başarıyla listelendi.",
+      biletler,
+      toplamBilet,
+    });
+  });
 });
 
 // Sunucuyu başlat

@@ -1,31 +1,50 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Paneli - Bilet Yönetimi</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css" />
+  <style>
+    .logout-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      text-decoration: none;
+      background-color: #dc3545;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover {
+      background-color: #b02a37;
+    }
+  </style>
 </head>
 <body>
+  <a href="/logout" class="logout-btn">Çıkış Yap</a>
+
   <div class="container">
     <h1>Admin Paneli</h1>
-    <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel">
+    <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel" />
 
     <!-- Yeni Bilet Ekleme -->
     <div class="form-group">
       <h2>Yeni Bilet Ekle</h2>
-      <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı">
-      <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası">
-      <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi">
+      <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı" />
+      <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası" />
+      <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi" />
       <button onclick="biletEkle()">Bilet Ekle</button>
     </div>
 
     <!-- Bilet Güncelleme -->
     <div class="form-group">
       <h2>Bilet Güncelle</h2>
-      <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı">
-      <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası">
-      <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi">
+      <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı" />
+      <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası" />
+      <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi" />
       <button onclick="biletGuncelle()">Bilet Güncelle</button>
     </div>
 
