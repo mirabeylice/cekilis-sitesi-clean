@@ -1,3 +1,4 @@
+require("dotenv").config();
 const admin = require("firebase-admin");
 
 let firebaseKey;
@@ -15,5 +16,4 @@ admin.initializeApp({
 });
 
 const db = admin.database();
-
 module.exports = { db };
