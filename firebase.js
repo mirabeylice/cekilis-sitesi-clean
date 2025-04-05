@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+require("dotenv").config();
+const admin = require("firebase-admin");
 
 const serviceAccount = {
   type: process.env.FIREBASE_TYPE,
@@ -15,7 +16,7 @@ const serviceAccount = {
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://cekilis-sitesi-default-rtdb.europe-west1.firebasedatabase.app'
+  databaseURL: "https://cekilis-sitesi-default-rtdb.europe-west1.firebasedatabase.app"
 });
 
 const db = admin.database();
