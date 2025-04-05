@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Focusbet çekiliş sitesi",
   "main": "server-cekilis.js",
-  "scripts": {
-    "start": "node server-cekilis.js"
+ "scripts": {
+  "start": "node server-admin.js"
   },
   "author": "mirabeylice",
   "license": "MIT",
