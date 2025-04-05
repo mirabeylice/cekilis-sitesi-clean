@@ -1,38 +1,38 @@
-require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const path = require("path");
-const { db } = require("./firebase"); // Firebase config bu dosyadan geliyor
+const { db } = require("./firebase");
 
 const app = express();
 
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use(session({
   secret: "cekilis-secret",
   resave: false,
   saveUninitialized: true,
-  cookie: { maxAge: 30 * 60 * 1000 } // 30 dakika işlemsizlikte oturumu bitir
+  cookie: { maxAge: 30 * 60 * 1000 } // 30 dk
 }));
 
-// Admin Login Sayfası
+// Admin Giriş Sayfası
 app.get("/admin-login", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "admin-login.html"));
 });
 
-// Giriş Kontrolü
+// Giriş Kontrol
 app.post("/admin-login", (req, res) => {
   const { kullaniciAdi, sifre } = req.body;
   if (kullaniciAdi === "focus00" && sifre === "Ortak-6543") {
     req.session.authenticated = true;
     res.redirect("/admin");
   } else {
-    res.send("<h3>Hatalı giriş. Lütfen tekrar deneyin.</h3>");
+    res.send("<h3>Hatalı giriş bilgisi</h3>");
   }
 });
 
-// Admin Paneli
+// Admin Panel
 app.get("/admin", (req, res) => {
   if (req.session.authenticated) {
     res.sendFile(path.join(__dirname, "views", "admin.html"));
@@ -41,14 +41,14 @@ app.get("/admin", (req, res) => {
   }
 });
 
-// Oturum Sonlandırma
+// Çıkış
 app.get("/logout", (req, res) => {
   req.session.destroy(() => {
     res.redirect("/admin-login");
   });
 });
 
-// Yeni Bilet Ekle
+// Bilet Ekle
 app.post("/bilet-ekle", (req, res) => {
   const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
   const tarih = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
@@ -56,10 +56,10 @@ app.post("/bilet-ekle", (req, res) => {
   const ref = db.ref(`biletler/${kullaniciAdi}`);
   ref.once("value", snapshot => {
     if (snapshot.exists()) {
-      res.json({ mesaj: "Bu kullanıcıya ait zaten biletler var! Lütfen 'Bilet Güncelle' bölümünü kullanın." });
+      res.json({ mesaj: "Bu kullanıcıya ait zaten bilet var. Güncelle bölümünü kullanın." });
     } else {
       ref.push({ bilet_numarasi: biletNumarasi, bilet_adedi: biletAdedi, tarih });
-      res.json({ mesaj: "Bilet başarıyla eklendi!" });
+      res.json({ mesaj: "Bilet başarıyla eklendi." });
     }
   });
 });
@@ -71,10 +71,10 @@ app.post("/bilet-guncelle", (req, res) => {
 
   const ref = db.ref(`biletler/${kullaniciAdi}`);
   ref.push({ bilet_numarasi: biletNumarasi, bilet_adedi: biletAdedi, tarih });
-  res.json({ mesaj: "Yeni bilet başarıyla eklendi!" });
+  res.json({ mesaj: "Yeni bilet başarıyla eklendi." });
 });
 
-// Tüm Biletleri Getir
+// Tüm Biletler
 app.get("/tum-biletler", (req, res) => {
   db.ref("biletler").once("value", snapshot => {
     const veriler = snapshot.val() || {};
@@ -88,17 +88,16 @@ app.get("/tum-biletler", (req, res) => {
   });
 });
 
-// Bilet Sil
+// Silme
 app.delete("/bilet-sil/:kullanici/:id", (req, res) => {
   const { kullanici, id } = req.params;
   db.ref(`biletler/${kullanici}/${id}`).remove(err => {
-    if (err) return res.json({ mesaj: "Silme sırasında hata oluştu." });
-    res.json({ mesaj: "Bilet başarıyla silindi." });
+    if (err) return res.json({ mesaj: "Silme hatası." });
+    res.json({ mesaj: "Bilet silindi." });
   });
 });
 
-// Sunucu Başlat
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`✅ Admin paneli ${PORT} portunda çalışıyor...`);
+  console.log(`Admin panel ${PORT} portunda çalışıyor`);
 });

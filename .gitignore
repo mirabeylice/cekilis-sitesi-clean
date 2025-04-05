@@ -1,7 +1,5 @@
 node_modules/
 *.log
 .DS_Store
+firebaseKey.json
 .env
-firebaseKey.json
-node_modules/
-firebaseKey.json
