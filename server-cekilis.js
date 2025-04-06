@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
-const db = require("./firebase");
+const { db } = require("./firebase"); // << düzeltildi
 
 const app = express();
 
@@ -37,6 +37,9 @@ app.get("/cekilis", (req, res) => {
       biletler,
       toplamBilet,
     });
+  }, (error) => {
+    console.error("Firebase hatası:", error);
+    res.status(500).json({ mesaj: "Veri alınırken bir hata oluştu.", biletler: [], toplamBilet: 0 });
   });
 });
 
