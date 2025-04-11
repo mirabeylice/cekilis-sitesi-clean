@@ -21,6 +21,13 @@
     .logout-btn:hover {
       background-color: #b02a37;
     }
+
+    textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -39,13 +46,12 @@
       <button onclick="biletEkle()">Bilet Ekle</button>
     </div>
 
-    <!-- Bilet Güncelleme -->
+    <!-- Bilet Güncelleme (Toplu) -->
     <div class="form-group">
-      <h2>Bilet Güncelle</h2>
+      <h2>Bilet Güncelle (Toplu)</h2>
       <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı" />
-      <input type="text" id="guncelleBiletNumarasi" placeholder="Yeni Bilet Numarası" />
-      <input type="number" id="guncelleBiletAdedi" placeholder="Bilet Adedi" />
-      <button onclick="biletGuncelle()">Bilet Güncelle</button>
+      <textarea id="guncelleTopluBiletler" rows="8" placeholder="Her satıra bir bilet numarası yazın (1 adet varsayılır)"></textarea>
+      <button onclick="topluBiletGuncelle()">Toplu Bilet Güncelle</button>
     </div>
 
     <!-- Tüm Biletleri Göster -->

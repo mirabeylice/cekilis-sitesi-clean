@@ -13,19 +13,23 @@ function biletEkle() {
   .then(data => alert(data.mesaj));
 }
 
-// Bilet Güncelleme
-function biletGuncelle() {
-  const kullaniciAdi = document.getElementById("guncelleKullaniciAdi").value;
-  const biletNumarasi = document.getElementById("guncelleBiletNumarasi").value;
-  const biletAdedi = document.getElementById("guncelleBiletAdedi").value;
+// Toplu Bilet Güncelleme
+function topluBiletGuncelle() {
+  const kullaniciAdi = document.getElementById("guncelleKullaniciAdi").value.trim();
+  const biletListesi = document.getElementById("guncelleTopluBiletler").value.trim().split("\n").filter(Boolean);
 
-  fetch("/bilet-guncelle", {
+  if (!kullaniciAdi || biletListesi.length === 0) {
+    return alert("Kullanıcı adı ve en az bir bilet numarası girilmelidir.");
+  }
+
+  fetch("/toplu-bilet-guncelle", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kullaniciAdi, biletNumarasi, biletAdedi })
+    body: JSON.stringify({ kullaniciAdi, biletListesi })
   })
   .then(res => res.json())
-  .then(data => alert(data.mesaj));
+  .then(data => alert(data.mesaj))
+  .catch(err => alert("Bir hata oluştu: " + err.message));
 }
 
 // Tüm Biletleri Listeleme
@@ -34,7 +38,7 @@ function tumBiletleriGoster() {
     .then(res => res.json())
     .then(biletler => {
       const liste = document.getElementById("biletListesi");
-      liste.innerHTML = ""; // Temizle
+      liste.innerHTML = "";
 
       if (biletler.length === 0) {
         liste.innerHTML = "<li>Hiç bilet bulunamadı.</li>";
@@ -60,9 +64,9 @@ function biletSil(kullanici, id) {
   fetch(`/bilet-sil/${kullanici}/${id}`, {
     method: "DELETE"
   })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.mesaj);
-      tumBiletleriGoster(); // Listeyi yenile
-    });
+  .then(res => res.json())
+  .then(data => {
+    alert(data.mesaj);
+    tumBiletleriGoster();
+  });
 }
