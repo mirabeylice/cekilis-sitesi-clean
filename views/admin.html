@@ -37,27 +37,19 @@
     <h1>Admin Paneli</h1>
     <img src="/admin.jpg" alt="Admin Paneli" class="admin-gorsel" />
 
-    <!-- Yeni Bilet Ekleme -->
+    <!-- Toplu Bilet Ekleme -->
     <div class="form-group">
-      <h2>Yeni Bilet Ekle</h2>
-      <input type="text" id="yeniKullaniciAdi" placeholder="Kullanıcı Adı" />
-      <input type="text" id="yeniBiletNumarasi" placeholder="Bilet Numarası" />
-      <input type="number" id="yeniBiletAdedi" placeholder="Bilet Adedi" />
-      <button onclick="biletEkle()">Bilet Ekle</button>
-    </div>
-
-    <!-- Bilet Güncelleme -->
-    <div class="form-group">
-      <h2>Toplu Bilet Güncelle</h2>
+      <h2>Toplu Bilet Ekle</h2>
       <input type="text" id="guncelleKullaniciAdi" placeholder="Kullanıcı Adı" />
       <textarea id="topluBiletler" placeholder="Her satıra 1 bilet numarası girin."></textarea>
-      <button onclick="topluBiletGuncelle()">Toplu Güncelle</button>
+      <button onclick="topluBiletGuncelle()">Toplu Ekle</button>
     </div>
 
     <!-- Tüm Biletleri Göster -->
     <div class="form-group">
       <h2>Tüm Biletler</h2>
       <button id="toggleBiletlerBtn" onclick="toggleBiletler()">Tüm Biletleri Göster</button>
+      <button onclick="tumBiletleriSil()">Tüm Biletleri Sil</button>
       <ul id="biletListesi" style="display:none;"></ul>
     </div>
   </div>

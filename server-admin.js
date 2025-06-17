@@ -47,29 +47,6 @@ app.get("/logout", (req, res) => {
   });
 });
 
-app.post("/bilet-ekle", (req, res) => {
-  const { kullaniciAdi, biletNumarasi, biletAdedi } = req.body;
-  const tarih = new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" });
-
-  const ref = db.ref(`biletler/${kullaniciAdi}`);
-  ref.once("value", (snapshot) => {
-    const veriler = snapshot.val();
-
-    if (veriler) {
-      const ayniBiletVar = Object.values(veriler).some(
-        (b) => b.bilet_numarasi === biletNumarasi
-      );
-      if (ayniBiletVar) {
-        return res.json({ mesaj: "Bu bilet numarası zaten eklenmiş!" });
-      }
-      return res.json({ mesaj: "Bu kullanıcıya ait zaten biletler var! Lütfen 'Bilet Güncelle' bölümünü kullanın." });
-    }
-
-    ref.push({ bilet_numarasi: biletNumarasi, bilet_adedi: biletAdedi, tarih });
-    res.json({ mesaj: "Bilet başarıyla eklendi!" });
-  });
-});
-
 app.post("/toplu-bilet-guncelle", (req, res) => {
   const { kullaniciAdi, biletlerMetin } = req.body;
   if (!kullaniciAdi || !biletlerMetin) {
@@ -118,6 +95,13 @@ app.delete("/bilet-sil/:kullanici/:id", (req, res) => {
   db.ref(`biletler/${kullanici}/${id}`).remove((err) => {
     if (err) return res.json({ mesaj: "Silme sırasında hata oluştu." });
     res.json({ mesaj: "Bilet başarıyla silindi." });
+  });
+});
+
+app.delete("/tum-biletleri-sil", (req, res) => {
+  db.ref("biletler").remove((err) => {
+    if (err) return res.json({ mesaj: "Tüm biletleri silerken hata oluştu." });
+    res.json({ mesaj: "Tüm biletler başarıyla silindi." });
   });
 });
 

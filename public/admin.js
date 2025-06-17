@@ -1,17 +1,3 @@
-function biletEkle() {
-  const kullaniciAdi = document.getElementById("yeniKullaniciAdi").value;
-  const biletNumarasi = document.getElementById("yeniBiletNumarasi").value;
-  const biletAdedi = document.getElementById("yeniBiletAdedi").value;
-
-  fetch("/bilet-ekle", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ kullaniciAdi, biletNumarasi, biletAdedi })
-  })
-  .then(res => res.json())
-  .then(data => alert(data.mesaj));
-}
-
 function topluBiletGuncelle() {
   const kullaniciAdi = document.getElementById("guncelleKullaniciAdi").value;
   const biletlerMetin = document.getElementById("topluBiletler").value;
@@ -75,4 +61,17 @@ function biletSil(kullanici, id) {
     alert(data.mesaj);
     tumBiletleriGoster();
   });
+}
+
+function tumBiletleriSil() {
+  if (confirm("Tüm biletleri silmek istediğinize emin misiniz? Bu işlem geri alınamaz!")) {
+    fetch("/tum-biletleri-sil", {
+      method: "DELETE"
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.mesaj);
+      tumBiletleriGoster();
+    });
+  }
 }
